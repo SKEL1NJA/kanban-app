@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import API from "../api/axios";
 
 export default function Dashboard() {
@@ -7,7 +8,8 @@ export default function Dashboard() {
   const [workspaceName, setWorkspaceName] = useState("");
   const [loading, setLoading] = useState(true);
 
-  // ✅ Load workspaces on page load
+  const navigate = useNavigate();
+
   useEffect(() => {
     fetchWorkspaces();
   }, []);
@@ -17,13 +19,12 @@ export default function Dashboard() {
       const res = await API.get("/workspaces");
       setWorkspaces(res.data);
     } catch (err) {
-      console.error("Error fetching workspaces:", err);
+      console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
-  // ✅ Create workspace
   const createWorkspace = async () => {
     if (!workspaceName.trim()) return;
 
@@ -32,18 +33,16 @@ export default function Dashboard() {
         name: workspaceName,
       });
 
-      // update UI instantly
       setWorkspaces((prev) => [...prev, res.data]);
-
       setWorkspaceName("");
     } catch (err) {
-      console.error("Create workspace error:", err);
+      console.error(err);
     }
   };
 
   if (loading) {
     return (
-      <div className="h-screen flex items-center justify-center text-white bg-gray-900">
+      <div className="h-screen flex items-center justify-center bg-gray-900 text-white">
         Loading...
       </div>
     );
@@ -56,16 +55,15 @@ export default function Dashboard() {
         Dashboard 🚀
       </h1>
 
-      {/* ✅ CREATE WORKSPACE */}
+      {/* Create Workspace */}
       <div className="flex gap-3 mb-8">
         <input
-          type="text"
-          placeholder="Workspace name"
           value={workspaceName}
           onChange={(e) =>
             setWorkspaceName(e.target.value)
           }
-          className="p-2 rounded text-black w-64"
+          placeholder="Workspace name"
+          className="p-2 rounded text-black"
         />
 
         <button
@@ -76,7 +74,7 @@ export default function Dashboard() {
         </button>
       </div>
 
-      {/* ✅ WORKSPACE LIST */}
+      {/* Workspace List */}
       {workspaces.length === 0 ? (
         <p>No workspaces found</p>
       ) : (
@@ -84,7 +82,10 @@ export default function Dashboard() {
           {workspaces.map((ws) => (
             <div
               key={ws._id}
-              className="bg-slate-800 p-6 rounded-lg shadow hover:bg-slate-700 transition"
+              onClick={() =>
+                navigate(`/workspace/${ws._id}`)
+              }
+              className="bg-slate-800 p-6 rounded-lg shadow hover:bg-slate-700 transition cursor-pointer"
             >
               <h2 className="text-xl font-semibold">
                 {ws.name}
