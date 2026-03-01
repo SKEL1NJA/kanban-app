@@ -19,3 +19,7 @@ app.use("/api/auth", authRoutes);
 const userRoutes = require("./routes/userRoutes");
 
 app.use("/api/users", userRoutes);
+
+const workspaceRoutes = require("./routes/workspaceRoutes");
+
+app.use("/api/workspaces", workspaceRoutes);
