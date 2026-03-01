@@ -43,3 +43,56 @@ exports.getCards = async (req, res) => {
     res.status(500).json(err.message);
   }
 };
+
+// Move card logic
+exports.moveCard = async (req, res) => {
+  try {
+    const { cardId, targetListId, newOrder } = req.body;
+
+    const card = await Card.findById(cardId);
+
+    if (!card)
+      return res.status(404).json({ message: "Card not found" });
+
+    const sourceListId = card.list;
+    const oldOrder = card.order;
+
+    // ✅ Fix source list order
+    await Card.updateMany(
+      {
+        list: sourceListId,
+        order: { $gt: oldOrder },
+      },
+      { $inc: { order: -1 } }
+    );
+
+    // ✅ Shift target list cards
+    await Card.updateMany(
+      {
+        list: targetListId,
+        order: { $gte: newOrder },
+      },
+      { $inc: { order: 1 } }
+    );
+
+    // ✅ Move card
+    card.list = targetListId;
+    card.order = newOrder;
+
+    await card.save();
+
+    // ✅ REALTIME EVENT
+    const io = req.app.get("io");
+
+    io.emit("cardMoved", {
+      card,
+    });
+
+    res.json({
+      message: "Card moved successfully",
+      card,
+    });
+  } catch (err) {
+    res.status(500).json(err.message);
+  }
+};
