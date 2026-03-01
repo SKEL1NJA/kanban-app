@@ -11,3 +11,7 @@ app.get("/", (req, res) => {
 });
 
 module.exports = app;
+
+const authRoutes = require("./routes/authRoutes");
+
+app.use("/api/auth", authRoutes);
