@@ -31,3 +31,7 @@ app.use("/api/boards", boardRoutes);
 const listRoutes = require("./routes/listRoutes");
 
 app.use("/api/lists", listRoutes);
+
+const cardRoutes = require("./routes/cardRoutes");
+
+app.use("/api/cards", cardRoutes);
