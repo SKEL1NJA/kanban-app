@@ -27,3 +27,7 @@ app.use("/api/workspaces", workspaceRoutes);
 const boardRoutes = require("./routes/boardRoutes");
 
 app.use("/api/boards", boardRoutes);
+
+const listRoutes = require("./routes/listRoutes");
+
+app.use("/api/lists", listRoutes);
