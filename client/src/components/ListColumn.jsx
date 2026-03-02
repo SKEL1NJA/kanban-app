@@ -4,65 +4,64 @@ import API from "../api/axios";
 export default function ListColumn({ list }) {
 
   const [cards, setCards] = useState([]);
-  const [cardTitle, setCardTitle] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [title, setTitle] = useState("");
 
-  // =========================
-  // FETCH CARDS
-  // =========================
-  useEffect(() => {
-    fetchCards();
-  }, [list._id]);
-
+  // ✅ fetch cards
   const fetchCards = async () => {
     try {
       const res = await API.get(`/cards/${list._id}`);
       setCards(res.data);
     } catch (err) {
-      console.error("Fetch cards error:", err);
-    } finally {
-      setLoading(false);
+      console.error(err);
     }
   };
 
-  // =========================
-  // CREATE CARD
-  // =========================
+  useEffect(() => {
+    fetchCards();
+  }, [list._id]);
+
+  // ✅ create card
   const createCard = async () => {
-    if (!cardTitle.trim()) return;
+    if (!title.trim()) return;
 
     try {
       const res = await API.post("/cards", {
-        title: cardTitle,
-        description: "",
+        title,
         listId: list._id,
       });
 
-      setCards((prev) => [...prev, res.data]);
-      setCardTitle("");
-
+      setCards(prev => [...prev, res.data]);
+      setTitle("");
     } catch (err) {
-      console.error("Create card error:", err);
+      console.error(err);
     }
   };
 
-  // =========================
-  // UI
-  // =========================
   return (
-    <div className="bg-slate-800 w-72 p-4 rounded flex-shrink-0">
+    <div className="bg-slate-800 w-72 p-4 rounded">
 
-      {/* LIST TITLE */}
-      <h2 className="text-lg font-semibold mb-4">
+      <h2 className="font-bold mb-4">
         {list.title}
       </h2>
 
+      {/* CARDS */}
+      <div className="space-y-3">
+        {cards.map(card => (
+          <div
+            key={card._id}
+            className="bg-gray-700 p-3 rounded"
+          >
+            {card.title}
+          </div>
+        ))}
+      </div>
+
       {/* ADD CARD */}
-      <div className="mb-4">
+      <div className="mt-4">
         <input
-          value={cardTitle}
-          onChange={(e) => setCardTitle(e.target.value)}
-          placeholder="Add card..."
+          value={title}
+          onChange={(e)=>setTitle(e.target.value)}
+          placeholder="Add card"
           className="w-full p-2 text-black rounded mb-2"
         />
 
@@ -73,24 +72,6 @@ export default function ListColumn({ list }) {
           Add Card
         </button>
       </div>
-
-      {/* CARDS */}
-      {loading ? (
-        <p>Loading...</p>
-      ) : (
-        <div className="space-y-3">
-
-          {cards.map((card) => (
-            <div
-              key={card._id}
-              className="bg-gray-700 p-3 rounded shadow"
-            >
-              <p>{card.title}</p>
-            </div>
-          ))}
-
-        </div>
-      )}
 
     </div>
   );
