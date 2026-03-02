@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+
 import API from "../api/axios";
 import Loader from "../components/Loader";
 
@@ -16,8 +18,8 @@ export default function Boards() {
     try {
       const res = await API.get(`/boards/${workspaceId}`);
       setBoards(res.data);
-    } catch (err) {
-      console.log(err);
+    } catch {
+      toast.error("Failed to load boards");
     } finally {
       setLoading(false);
     }
@@ -30,13 +32,20 @@ export default function Boards() {
   const createBoard = async () => {
     if (!title.trim()) return;
 
-    const res = await API.post("/boards", {
-      title,
-      workspaceId,
-    });
+    try {
+      const res = await API.post("/boards", {
+        title,
+        workspaceId,
+      });
 
-    setBoards(prev => [...prev, res.data]);
-    setTitle("");
+      setBoards(prev => [...prev, res.data]);
+      setTitle("");
+
+      toast.success("Board created 🎉");
+
+    } catch {
+      toast.error("Failed to create board");
+    }
   };
 
   if (loading) return <Loader />;
@@ -44,9 +53,11 @@ export default function Boards() {
   return (
     <div className="p-6 bg-gray-900 min-h-screen text-white">
 
-      <h1 className="text-2xl mb-4">Boards</h1>
+      <h1 className="text-2xl mb-4">
+        Boards
+      </h1>
 
-      <div className="mb-6 flex gap-2">
+      <div className="flex gap-2 mb-6">
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
@@ -67,7 +78,9 @@ export default function Boards() {
         {boards.map(board => (
           <div
             key={board._id}
-            onClick={() => navigate(`/board/${board._id}`)}
+            onClick={() =>
+              navigate(`/board/${board._id}`)
+            }
             className="bg-slate-800 p-6 rounded cursor-pointer hover:bg-slate-700"
           >
             {board.title}

@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+
 import API from "../api/axios";
 
 import {
   Droppable,
-  Draggable
+  Draggable,
 } from "@hello-pangea/dnd";
 
 export default function ListColumn({ list }) {
@@ -11,22 +13,17 @@ export default function ListColumn({ list }) {
   const [cards, setCards] = useState([]);
   const [title, setTitle] = useState("");
 
-  // ✅ FETCH CARDS
   const fetchCards = async () => {
-    try {
-      const res = await API.get(`/cards/${list._id}`);
-      setCards(res.data);
-    } catch (err) {
-      console.error(err);
-    }
+    const res = await API.get(`/cards/${list._id}`);
+    setCards(res.data);
   };
 
   useEffect(() => {
     fetchCards();
   }, [list._id]);
 
-  // ✅ CREATE CARD
   const createCard = async () => {
+
     if (!title.trim()) return;
 
     try {
@@ -37,8 +34,11 @@ export default function ListColumn({ list }) {
 
       setCards(prev => [...prev, res.data]);
       setTitle("");
-    } catch (err) {
-      console.error(err);
+
+      toast.success("Card added ✅");
+
+    } catch {
+      toast.error("Card creation failed");
     }
   };
 
@@ -49,30 +49,12 @@ export default function ListColumn({ list }) {
         {list.title}
       </h2>
 
-      {/* ADD CARD */}
-      <div className="flex gap-2 mb-4">
-        <input
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="Card title"
-          className="text-black p-1 rounded w-full"
-        />
-
-        <button
-          onClick={createCard}
-          className="bg-blue-500 px-2 rounded"
-        >
-          +
-        </button>
-      </div>
-
-      {/* ✅ DROP ZONE */}
       <Droppable droppableId={list._id}>
         {(provided) => (
           <div
             ref={provided.innerRef}
             {...provided.droppableProps}
-            className="space-y-3 min-h-[20px]"
+            className="min-h-[50px]"
           >
 
             {cards.map((card, index) => (
@@ -86,7 +68,7 @@ export default function ListColumn({ list }) {
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
-                    className="bg-gray-700 p-3 rounded cursor-grab"
+                    className="bg-gray-700 p-2 mb-2 rounded"
                   >
                     {card.title}
                   </div>
@@ -99,6 +81,22 @@ export default function ListColumn({ list }) {
           </div>
         )}
       </Droppable>
+
+      <input
+        value={title}
+        onChange={(e) =>
+          setTitle(e.target.value)
+        }
+        placeholder="New card"
+        className="p-2 mt-3 w-full text-black rounded"
+      />
+
+      <button
+        onClick={createCard}
+        className="bg-blue-500 w-full mt-2 py-1 rounded"
+      >
+        Add Card
+      </button>
 
     </div>
   );

@@ -1,12 +1,14 @@
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+
 import API from "../api/axios";
 import { AuthContext } from "../context/AuthContext";
 
 export default function Login() {
 
-  const { login } = useContext(AuthContext);
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -22,10 +24,16 @@ export default function Login() {
       });
 
       login(res.data);
+
+      toast.success("Login successful ✅");
+
       navigate("/dashboard");
 
-    } catch {
-      alert("Login failed");
+    } catch (err) {
+      toast.error(
+        err.response?.data?.message ||
+        "Login failed"
+      );
     } finally {
       setLoading(false);
     }
@@ -41,15 +49,16 @@ export default function Login() {
         </h2>
 
         <input
+          type="email"
           placeholder="Email"
-          className="w-full p-2 mb-3"
+          className="w-full p-2 mb-3 rounded"
           onChange={(e) => setEmail(e.target.value)}
         />
 
         <input
           type="password"
           placeholder="Password"
-          className="w-full p-2"
+          className="w-full p-2 rounded"
           onChange={(e) => setPassword(e.target.value)}
         />
 
