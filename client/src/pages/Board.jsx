@@ -3,59 +3,115 @@ import { useParams } from "react-router-dom";
 import API from "../api/axios";
 import ListColumn from "../components/ListColumn";
 
+import {
+  DragDropContext,
+} from "@hello-pangea/dnd";
+
 export default function Board() {
 
   const { boardId } = useParams();
 
   const [lists, setLists] = useState([]);
-  const [title, setTitle] = useState("");
+  const [listTitle, setListTitle] = useState("");
+  const [loading, setLoading] = useState(true);
 
-  // ✅ FUNCTION FIRST
+  // ✅ FETCH LISTS
   const fetchLists = async () => {
-    const res = await API.get(`/lists/${boardId}`);
-    setLists(res.data);
+    try {
+      const res = await API.get(`/lists/${boardId}`);
+      setLists(res.data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     fetchLists();
   }, [boardId]);
 
+  // ✅ CREATE LIST
   const createList = async () => {
-    if (!title.trim()) return;
+    if (!listTitle.trim()) return;
 
-    const res = await API.post("/lists", {
-      title,
-      boardId,
-    });
+    try {
+      const res = await API.post("/lists", {
+        title: listTitle,
+        boardId,
+      });
 
-    setLists(prev => [...prev, res.data]);
-    setTitle("");
+      setLists(prev => [...prev, res.data]);
+      setListTitle("");
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  return (
-    <div className="p-6 bg-gray-900 min-h-screen text-white">
+  // ✅ DRAG END HANDLER
+  const onDragEnd = async (result) => {
 
-      <h1 className="text-3xl mb-6">Kanban Board 🚀</h1>
+    if (!result.destination) return;
 
-      <input
-        value={title}
-        onChange={(e)=>setTitle(e.target.value)}
-        placeholder="List title"
-        className="p-2 text-black mr-2"
-      />
+    const { draggableId, destination } = result;
 
-      <button
-        onClick={createList}
-        className="bg-blue-500 px-4 py-2 rounded"
-      >
-        Add List
-      </button>
+    try {
+      await API.put("/cards/move", {
+        cardId: draggableId,
+        targetListId: destination.droppableId,
+        newOrder: destination.index,
+      });
 
-      <div className="flex gap-6 mt-6 overflow-x-auto">
-        {lists.map(list => (
-          <ListColumn key={list._id} list={list}/>
-        ))}
+      fetchLists();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  if (loading)
+    return (
+      <div className="h-screen flex justify-center items-center bg-gray-900 text-white">
+        Loading Board...
       </div>
+    );
+
+  return (
+    <div className="min-h-screen bg-gray-900 text-white p-6">
+
+      <h1 className="text-3xl mb-6">
+        Kanban Board 🚀
+      </h1>
+
+      {/* CREATE LIST */}
+      <div className="flex gap-3 mb-6">
+        <input
+          value={listTitle}
+          onChange={(e) => setListTitle(e.target.value)}
+          placeholder="List title"
+          className="p-2 rounded text-black"
+        />
+
+        <button
+          onClick={createList}
+          className="bg-blue-500 px-4 rounded"
+        >
+          Add List
+        </button>
+      </div>
+
+      {/* ✅ DRAG CONTEXT */}
+      <DragDropContext onDragEnd={onDragEnd}>
+        <div className="flex gap-6 overflow-x-auto">
+
+          {lists.map(list => (
+            <ListColumn
+              key={list._id}
+              list={list}
+            />
+          ))}
+
+        </div>
+      </DragDropContext>
 
     </div>
   );

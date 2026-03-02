@@ -1,12 +1,17 @@
 import { useEffect, useState } from "react";
 import API from "../api/axios";
 
+import {
+  Droppable,
+  Draggable
+} from "@hello-pangea/dnd";
+
 export default function ListColumn({ list }) {
 
   const [cards, setCards] = useState([]);
   const [title, setTitle] = useState("");
 
-  // ✅ fetch cards
+  // ✅ FETCH CARDS
   const fetchCards = async () => {
     try {
       const res = await API.get(`/cards/${list._id}`);
@@ -20,7 +25,7 @@ export default function ListColumn({ list }) {
     fetchCards();
   }, [list._id]);
 
-  // ✅ create card
+  // ✅ CREATE CARD
   const createCard = async () => {
     if (!title.trim()) return;
 
@@ -38,40 +43,62 @@ export default function ListColumn({ list }) {
   };
 
   return (
-    <div className="bg-slate-800 w-72 p-4 rounded">
+    <div className="bg-slate-800 w-64 p-4 rounded">
 
-      <h2 className="font-bold mb-4">
+      <h2 className="font-semibold mb-4">
         {list.title}
       </h2>
 
-      {/* CARDS */}
-      <div className="space-y-3">
-        {cards.map(card => (
-          <div
-            key={card._id}
-            className="bg-gray-700 p-3 rounded"
-          >
-            {card.title}
-          </div>
-        ))}
-      </div>
-
       {/* ADD CARD */}
-      <div className="mt-4">
+      <div className="flex gap-2 mb-4">
         <input
           value={title}
-          onChange={(e)=>setTitle(e.target.value)}
-          placeholder="Add card"
-          className="w-full p-2 text-black rounded mb-2"
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Card title"
+          className="text-black p-1 rounded w-full"
         />
 
         <button
           onClick={createCard}
-          className="bg-blue-500 w-full py-1 rounded"
+          className="bg-blue-500 px-2 rounded"
         >
-          Add Card
+          +
         </button>
       </div>
+
+      {/* ✅ DROP ZONE */}
+      <Droppable droppableId={list._id}>
+        {(provided) => (
+          <div
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+            className="space-y-3 min-h-[20px]"
+          >
+
+            {cards.map((card, index) => (
+              <Draggable
+                key={card._id}
+                draggableId={card._id}
+                index={index}
+              >
+                {(provided) => (
+                  <div
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                    className="bg-gray-700 p-3 rounded cursor-grab"
+                  >
+                    {card.title}
+                  </div>
+                )}
+              </Draggable>
+            ))}
+
+            {provided.placeholder}
+
+          </div>
+        )}
+      </Droppable>
 
     </div>
   );
