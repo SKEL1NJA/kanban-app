@@ -1,46 +1,51 @@
 require("dotenv").config();
 
+const express = require("express");
 const http = require("http");
+const cors = require("cors");
+const mongoose = require("mongoose");
+
 const { Server } = require("socket.io");
 
-const app = require("./src/app");
-const connectDB = require("./src/config/db");
+const app = express();
 
-// ✅ Connect Database FIRST
-connectDB();
+app.use(cors());
+app.use(express.json());
 
-// ✅ Create HTTP Server
+/* ROUTES */
+app.use("/api/auth", require("./src/routes/authRoutes"));
+app.use("/api/workspaces", require("./src/routes/workspaceRoutes"));
+app.use("/api/boards", require("./src/routes/boardRoutes"));
+app.use("/api/lists", require("./src/routes/listRoutes"));
+app.use("/api/cards", require("./src/routes/cardRoutes"));
+
+/* SERVER */
 const server = http.createServer(app);
 
-// ✅ Setup Socket.io
+/* SOCKET */
 const io = new Server(server, {
   cors: {
-    origin: "*",
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST"],
   },
 });
 
-// ✅ Make io accessible inside controllers
-app.set("io", io);
-
-// ✅ Socket Connection
 io.on("connection", (socket) => {
-  console.log("✅ User connected:", socket.id);
-
-  // Join board room
-  socket.on("joinBoard", (boardId) => {
-    socket.join(boardId);
-    console.log(`User joined board ${boardId}`);
-  });
+  console.log("User Connected:", socket.id);
 
   socket.on("disconnect", () => {
-    console.log("❌ User disconnected:", socket.id);
+    console.log("User Disconnected");
   });
 });
 
-// ✅ Start Server
-const PORT = process.env.PORT || 5000;
+/* make io globally accessible */
+app.set("io", io);
 
-server.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-});
+/* DB */
+mongoose
+  .connect("mongodb://127.0.0.1:27017/kanban")
+  .then(() => console.log("Mongo Connected"));
+
+server.listen(5000, () =>
+  console.log("Server running on 5000")
+);
