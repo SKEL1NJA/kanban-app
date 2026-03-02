@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import API from "../api/axios";
+import Loader from "../components/Loader";
 
 export default function Boards() {
 
@@ -9,14 +10,19 @@ export default function Boards() {
 
   const [boards, setBoards] = useState([]);
   const [title, setTitle] = useState("");
+  const [loading, setLoading] = useState(true);
 
-  // ✅ FIRST
   const fetchBoards = async () => {
-    const res = await API.get(`/boards/${workspaceId}`);
-    setBoards(res.data);
+    try {
+      const res = await API.get(`/boards/${workspaceId}`);
+      setBoards(res.data);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // ✅ THEN
   useEffect(() => {
     fetchBoards();
   }, [workspaceId]);
@@ -33,37 +39,42 @@ export default function Boards() {
     setTitle("");
   };
 
+  if (loading) return <Loader />;
+
   return (
     <div className="p-6 bg-gray-900 min-h-screen text-white">
 
       <h1 className="text-2xl mb-4">Boards</h1>
 
-      <input
-        value={title}
-        onChange={(e)=>setTitle(e.target.value)}
-        placeholder="Board name"
-        className="p-2 text-black mr-2"
-      />
+      <div className="mb-6 flex gap-2">
+        <input
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="New Board"
+          className="p-2 text-black rounded"
+        />
 
-      <button
-        onClick={createBoard}
-        className="bg-blue-500 px-4 py-2 rounded"
-      >
-        Create
-      </button>
+        <button
+          onClick={createBoard}
+          className="bg-blue-500 px-4 rounded"
+        >
+          Create
+        </button>
+      </div>
 
-      <div className="grid grid-cols-4 gap-4 mt-6">
+      <div className="grid grid-cols-3 gap-4">
+
         {boards.map(board => (
           <div
             key={board._id}
-            onClick={()=>navigate(`/board/${board._id}`)}
-            className="bg-slate-800 p-5 rounded cursor-pointer"
+            onClick={() => navigate(`/board/${board._id}`)}
+            className="bg-slate-800 p-6 rounded cursor-pointer hover:bg-slate-700"
           >
             {board.title}
           </div>
         ))}
-      </div>
 
+      </div>
     </div>
   );
 }

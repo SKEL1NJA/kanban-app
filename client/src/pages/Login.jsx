@@ -8,11 +8,14 @@ export default function Login() {
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const [email,setEmail]=useState("");
-  const [password,setPassword]=useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
     try {
+      setLoading(true);
+
       const res = await API.post("/auth/login", {
         email,
         password,
@@ -21,8 +24,10 @@ export default function Login() {
       login(res.data);
       navigate("/dashboard");
 
-    } catch{
+    } catch {
       alert("Login failed");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -30,29 +35,33 @@ export default function Login() {
     <div className="h-screen flex justify-center items-center bg-gray-900">
 
       <div className="bg-slate-800 p-6 rounded w-80">
-        <h2 className="text-white text-xl mb-4">Login</h2>
+
+        <h2 className="text-white text-xl mb-4">
+          Login
+        </h2>
 
         <input
           placeholder="Email"
           className="w-full p-2 mb-3"
-          onChange={(e)=>setEmail(e.target.value)}
+          onChange={(e) => setEmail(e.target.value)}
         />
 
         <input
           type="password"
           placeholder="Password"
-          className="w-full p-2 mb-3"
-          onChange={(e)=>setPassword(e.target.value)}
+          className="w-full p-2"
+          onChange={(e) => setPassword(e.target.value)}
         />
 
         <button
           onClick={handleLogin}
-          className="bg-blue-500 w-full py-2 text-white"
+          disabled={loading}
+          className="w-full bg-blue-500 py-2 mt-4 rounded text-white"
         >
-          Login
+          {loading ? "Logging in..." : "Login"}
         </button>
-      </div>
 
+      </div>
     </div>
   );
 }

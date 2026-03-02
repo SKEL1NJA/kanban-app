@@ -3,84 +3,57 @@ import { useParams } from "react-router-dom";
 import API from "../api/axios";
 import ListColumn from "../components/ListColumn";
 import socket from "../socket/socket";
+import Loader from "../components/Loader";
 
 import { DragDropContext } from "@hello-pangea/dnd";
 
 export default function Board() {
 
   const { boardId } = useParams();
-  const [lists, setLists] = useState([]);
 
-  /* ================= FETCH ================= */
+  const [lists, setLists] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const fetchLists = async () => {
-    const res = await API.get(`/lists/${boardId}`);
-    setLists(res.data);
+    try {
+      const res = await API.get(`/lists/${boardId}`);
+      setLists(res.data);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     fetchLists();
   }, [boardId]);
 
-  /* ================= REALTIME ================= */
-
+  /* ✅ REALTIME LISTENER */
   useEffect(() => {
-    socket.on("cardMoved", fetchLists);
+
+    socket.on("cardMoved", () => {
+      fetchLists();
+    });
 
     return () => {
       socket.off("cardMoved");
     };
-  }, []);
 
-  /* ================= OPTIMISTIC MOVE ================= */
+  }, []);
 
   const onDragEnd = async (result) => {
 
     if (!result.destination) return;
 
-    const { draggableId, source, destination } = result;
+    const { draggableId, destination } = result;
 
-    /* ✅ FIND SOURCE + DEST LIST */
-    const sourceListIndex = lists.findIndex(
-      l => l._id === source.droppableId
-    );
-
-    const destListIndex = lists.findIndex(
-      l => l._id === destination.droppableId
-    );
-
-    const newLists = [...lists];
-
-    const sourceCards = [...newLists[sourceListIndex].cards];
-    const [movedCard] = sourceCards.splice(source.index, 1);
-
-    const destCards =
-      sourceListIndex === destListIndex
-        ? sourceCards
-        : [...newLists[destListIndex].cards];
-
-    destCards.splice(destination.index, 0, movedCard);
-
-    newLists[sourceListIndex].cards = sourceCards;
-    newLists[destListIndex].cards = destCards;
-
-    /* ✅ INSTANT UI UPDATE */
-    setLists(newLists);
-
-    /* ✅ BACKEND UPDATE */
-    try {
-      await API.put("/cards/move", {
-        cardId: draggableId,
-        targetListId: destination.droppableId,
-        newOrder: destination.index,
-      });
-    } catch (err) {
-      console.error(err);
-      fetchLists(); // rollback if failed
-    }
+    await API.put("/cards/move", {
+      cardId: draggableId,
+      targetListId: destination.droppableId,
+      newOrder: destination.index,
+    });
   };
 
-  /* ================= UI ================= */
+  if (loading) return <Loader />;
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-6">
