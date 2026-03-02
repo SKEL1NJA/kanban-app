@@ -1,17 +1,13 @@
 const Card = require("../models/Card");
-const List = require("../models/List");
 
-// CREATE CARD
+/* ===============================
+   CREATE CARD
+================================ */
 exports.createCard = async (req, res) => {
   try {
     const { title, description, listId } = req.body;
 
-    const list = await List.findById(listId);
-
-    if (!list)
-      return res.status(404).json({ message: "List not found" });
-
-    const cardsCount = await Card.countDocuments({
+    const count = await Card.countDocuments({
       list: listId,
     });
 
@@ -19,17 +15,19 @@ exports.createCard = async (req, res) => {
       title,
       description,
       list: listId,
-      order: cardsCount,
-      createdBy: req.user._id,
+      order: count,
+      createdBy: req.user?._id,
     });
 
     res.status(201).json(card);
   } catch (err) {
-    res.status(500).json(err.message);
+    res.status(500).json({ message: err.message });
   }
 };
 
-// GET CARDS OF LIST
+/* ===============================
+   GET CARDS
+================================ */
 exports.getCards = async (req, res) => {
   try {
     const { listId } = req.params;
@@ -40,11 +38,13 @@ exports.getCards = async (req, res) => {
 
     res.json(cards);
   } catch (err) {
-    res.status(500).json(err.message);
+    res.status(500).json({ message: err.message });
   }
 };
 
-// Move card logic
+/* ===============================
+   MOVE CARD (REALTIME)
+================================ */
 exports.moveCard = async (req, res) => {
   try {
     const { cardId, targetListId, newOrder } = req.body;
@@ -52,12 +52,14 @@ exports.moveCard = async (req, res) => {
     const card = await Card.findById(cardId);
 
     if (!card)
-      return res.status(404).json({ message: "Card not found" });
+      return res.status(404).json({
+        message: "Card not found",
+      });
 
     const sourceListId = card.list;
     const oldOrder = card.order;
 
-    // ✅ Fix source list order
+    /* ✅ Fix source list */
     await Card.updateMany(
       {
         list: sourceListId,
@@ -66,7 +68,7 @@ exports.moveCard = async (req, res) => {
       { $inc: { order: -1 } }
     );
 
-    // ✅ Shift target list cards
+    /* ✅ Shift target list */
     await Card.updateMany(
       {
         list: targetListId,
@@ -75,24 +77,24 @@ exports.moveCard = async (req, res) => {
       { $inc: { order: 1 } }
     );
 
-    // ✅ Move card
+    /* ✅ Move */
     card.list = targetListId;
     card.order = newOrder;
 
     await card.save();
 
-    // ✅ REALTIME EVENT
+    /* ✅ SOCKET EVENT */
     const io = req.app.get("io");
 
     io.emit("cardMoved", {
-      card,
+      cardId,
     });
 
     res.json({
-      message: "Card moved successfully",
+      message: "Card moved",
       card,
     });
   } catch (err) {
-    res.status(500).json(err.message);
+    res.status(500).json({ message: err.message });
   }
 };
