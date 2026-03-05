@@ -18,17 +18,17 @@ export default function Login() {
       });
 
       login(res.data);
+
       navigate("/dashboard");
-    } catch {
+    } catch (err) {
+      console.error(err);
       alert("Login failed");
     }
   };
 
   return (
     <div className="h-screen flex justify-center items-center bg-gray-900">
-
       <div className="bg-slate-800 p-6 rounded w-80">
-
         <h2 className="text-white text-xl mb-4">Login</h2>
 
         <input
@@ -57,9 +57,7 @@ export default function Login() {
             Register
           </Link>
         </p>
-
       </div>
-
     </div>
   );
 }
