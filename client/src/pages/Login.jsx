@@ -1,41 +1,26 @@
 import { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
-
+import { useNavigate, Link } from "react-router-dom";
 import API from "../api/axios";
 import { AuthContext } from "../context/AuthContext";
 
 export default function Login() {
-
-  const navigate = useNavigate();
   const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
     try {
-      setLoading(true);
-
       const res = await API.post("/auth/login", {
         email,
         password,
       });
 
       login(res.data);
-
-      toast.success("Login successful ✅");
-
       navigate("/dashboard");
-
-    } catch (err) {
-      toast.error(
-        err.response?.data?.message ||
-        "Login failed"
-      );
-    } finally {
-      setLoading(false);
+    } catch {
+      alert("Login failed");
     }
   };
 
@@ -44,12 +29,9 @@ export default function Login() {
 
       <div className="bg-slate-800 p-6 rounded w-80">
 
-        <h2 className="text-white text-xl mb-4">
-          Login
-        </h2>
+        <h2 className="text-white text-xl mb-4">Login</h2>
 
         <input
-          type="email"
           placeholder="Email"
           className="w-full p-2 mb-3 rounded"
           onChange={(e) => setEmail(e.target.value)}
@@ -58,19 +40,26 @@ export default function Login() {
         <input
           type="password"
           placeholder="Password"
-          className="w-full p-2 rounded"
+          className="w-full p-2 mb-3 rounded"
           onChange={(e) => setPassword(e.target.value)}
         />
 
         <button
+          className="w-full bg-blue-500 text-white p-2 rounded"
           onClick={handleLogin}
-          disabled={loading}
-          className="w-full bg-blue-500 py-2 mt-4 rounded text-white"
         >
-          {loading ? "Logging in..." : "Login"}
+          Login
         </button>
 
+        <p className="text-gray-400 text-sm mt-4 text-center">
+          Don't have an account?{" "}
+          <Link to="/register" className="text-blue-400">
+            Register
+          </Link>
+        </p>
+
       </div>
+
     </div>
   );
 }
