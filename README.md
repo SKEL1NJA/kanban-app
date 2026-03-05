@@ -1,19 +1,197 @@
-# Realtime Kanban Board
+🚀 Realtime Kanban Board
 
-A full-stack realtime Kanban board similar to Trello.
+A full-stack Kanban task management application that allows users to organize tasks using boards, lists, and cards with drag-and-drop functionality and real-time updates.
 
-## Tech Stack
-React.js, Tailwind CSS, Node.js, Express.js, MongoDB Atlas, Socket.IO, JWT Authentication
+The application supports secure authentication, collaborative task management, and live synchronization of card movements across users using WebSockets.
 
-## Features
-- Authentication (JWT)
-- Workspaces and Boards
-- Drag-and-drop Kanban lists
-- Realtime card movement
-- Cloud deployment
+🌐 Live Demo
 
-## Live Demo
-https://kanban-app-two-nu.vercel.app/
+Frontend (Vercel)
+https://kanban-app-two-nu.vercel.app
 
-## Backend API
+Backend API (Render)
 https://kanban-api-6djm.onrender.com
+
+📸 Application Workflow
+User Authentication
+      ↓
+Create Workspace
+      ↓
+Create Boards
+      ↓
+Create Lists (Kanban Columns)
+      ↓
+Create Cards (Tasks)
+      ↓
+Drag & Drop Cards Across Lists
+      ↓
+Realtime Updates via WebSockets
+✨ Features
+🔐 Authentication
+
+User registration and login
+
+Secure authentication using JWT
+
+Protected routes using React Context API
+
+📂 Workspace Management
+
+Create multiple workspaces
+
+Organize projects inside workspaces
+
+📋 Boards & Lists
+
+Each workspace can contain multiple boards
+
+Boards contain multiple lists (columns)
+
+Example lists:
+
+Todo
+In Progress
+Done
+📝 Task Cards
+
+Create and manage task cards
+
+Move cards across lists
+
+Reorder tasks within a list
+
+🔄 Drag & Drop
+
+Implemented using @hello-pangea/dnd
+
+Smooth drag-and-drop task management
+
+⚡ Realtime Collaboration
+
+Card movements update instantly across users
+
+Powered by Socket.io
+
+🚀 Deployment
+
+Frontend deployed on Vercel
+
+Backend deployed on Render
+
+Database hosted on MongoDB Atlas
+
+🛠 Tech Stack
+Frontend
+
+React (Vite)
+
+React Router
+
+Axios
+
+Tailwind CSS
+
+React Hot Toast
+
+@hello-pangea/dnd
+
+Backend
+
+Node.js
+
+Express.js
+
+MongoDB
+
+Mongoose
+
+JWT Authentication
+
+Socket.io
+
+Infrastructure
+
+Vercel – Frontend hosting
+
+Render – Backend hosting
+
+MongoDB Atlas – Cloud database
+
+🏗 System Architecture
+Client (React + Vite)
+        │
+        │ HTTP Requests (Axios)
+        ▼
+Backend API (Node + Express)
+        │
+        │ Database Queries
+        ▼
+MongoDB Atlas
+
+Realtime Layer
+Client ⇄ Socket.io ⇄ Server
+📁 Project Structure
+KANBAN-APP
+│
+├── client
+│   ├── src
+│   │   ├── api
+│   │   ├── components
+│   │   ├── context
+│   │   ├── pages
+│   │   ├── socket
+│   │   └── main.jsx
+│   │
+│   ├── .env
+│   ├── package.json
+│   └── vite.config.js
+│
+├── server
+│   ├── src
+│   │   ├── controllers
+│   │   ├── models
+│   │   ├── routes
+│   │   └── middleware
+│   │
+│   ├── server.js
+│   └── package.json
+⚙️ Environment Variables
+Frontend (.env)
+
+VITE_API_URL=https://kanban-api-6djm.onrender.com
+Backend (.env)
+PORT=5000
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_secret_key
+CLIENT_URL=https://kanban-app-two-nu.vercel.app
+🚀 Local Development Setup
+
+Clone the repository
+
+git clone https://github.com/SKEL1NJA/kanban-app.git
+
+Navigate to the project folder
+
+cd kanban-app
+Install Backend Dependencies
+cd server
+npm install
+npm run dev
+Install Frontend Dependencies
+cd client
+npm install
+npm run dev
+
+📜 License
+
+This project is licensed under the MIT License.
+
+👨‍💻 Author
+
+Uday Khanna
+
+GitHub
+https://github.com/SKEL1NJA
+
+LinkedIn
+https://www.linkedin.com/
