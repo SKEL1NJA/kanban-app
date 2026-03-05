@@ -11,8 +11,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 function App() {
   return (
     <BrowserRouter>
-
-      {/* ✅ GLOBAL TOAST */}
+      {/* GLOBAL TOAST */}
       <Toaster
         position="top-right"
         toastOptions={{
@@ -25,9 +24,12 @@ function App() {
 
       <Routes>
 
+        {/* AUTH */}
         <Route path="/" element={<Login />} />
+        <Route path="/login" element={<Login />} />   {/* ✅ add this */}
         <Route path="/register" element={<Register />} />
 
+        {/* PROTECTED */}
         <Route
           path="/dashboard"
           element={
