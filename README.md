@@ -13,6 +13,8 @@ Backend API (Render)
 https://kanban-api-6djm.onrender.com
 
 📸 Application Workflow
+
+```bash
 User Authentication
       ↓
 Create Workspace
@@ -26,98 +28,105 @@ Create Cards (Tasks)
 Drag & Drop Cards Across Lists
       ↓
 Realtime Updates via WebSockets
+```
+
 ✨ Features
 🔐 Authentication
 
-User registration and login
+- User registration and login
 
-Secure authentication using JWT
+- Secure authentication using JWT
 
-Protected routes using React Context API
+- Protected routes using React Context API
 
 📂 Workspace Management
 
-Create multiple workspaces
+- Create multiple workspaces
 
-Organize projects inside workspaces
+- Organize projects inside workspaces
 
 📋 Boards & Lists
 
-Each workspace can contain multiple boards
+- Each workspace can contain multiple boards
 
-Boards contain multiple lists (columns)
+- Boards contain multiple lists (columns)
 
 Example lists:
 
+```bash
 Todo
 In Progress
 Done
+```
+
 📝 Task Cards
 
-Create and manage task cards
+- Create and manage task cards
 
-Move cards across lists
+- Move cards across lists
 
-Reorder tasks within a list
+- Reorder tasks within a list
 
 🔄 Drag & Drop
 
-Implemented using @hello-pangea/dnd
+- Implemented using @hello-pangea/dnd
 
-Smooth drag-and-drop task management
+- Smooth drag-and-drop task management
 
 ⚡ Realtime Collaboration
 
-Card movements update instantly across users
+- Card movements update instantly across users
 
-Powered by Socket.io
+- Powered by Socket.io
 
 🚀 Deployment
 
-Frontend deployed on Vercel
+- Frontend deployed on Vercel
 
-Backend deployed on Render
+- Backend deployed on Render
 
-Database hosted on MongoDB Atlas
+- Database hosted on MongoDB Atlas
 
 🛠 Tech Stack
 Frontend
 
-React (Vite)
+- React (Vite)
 
-React Router
+- React Router
 
-Axios
+- Axios
 
-Tailwind CSS
+- Tailwind CSS
 
-React Hot Toast
+- React Hot Toast
 
-@hello-pangea/dnd
+- @hello-pangea/dnd
 
 Backend
 
-Node.js
+- Node.js
 
-Express.js
+- Express.js
 
-MongoDB
+- MongoDB
 
-Mongoose
+- Mongoose
 
-JWT Authentication
+- JWT Authentication
 
-Socket.io
+- Socket.io
 
 Infrastructure
 
-Vercel – Frontend hosting
+- Vercel – Frontend hosting
 
-Render – Backend hosting
+- Render – Backend hosting
 
-MongoDB Atlas – Cloud database
+- MongoDB Atlas – Cloud database
 
 🏗 System Architecture
+
+```bash
 Client (React + Vite)
         │
         │ HTTP Requests (Axios)
@@ -130,7 +139,11 @@ MongoDB Atlas
 
 Realtime Layer
 Client ⇄ Socket.io ⇄ Server
+```
+
 📁 Project Structure
+
+```bash
 KANBAN-APP
 │
 ├── client
@@ -155,32 +168,49 @@ KANBAN-APP
 │   │
 │   ├── server.js
 │   └── package.json
+```
+
 ⚙️ Environment Variables
 Frontend (.env)
 
+``` bash
 VITE_API_URL=https://kanban-api-6djm.onrender.com
+```
+
 Backend (.env)
+
+```bash
 PORT=5000
 MONGO_URI=your_mongodb_connection_string
 JWT_SECRET=your_secret_key
 CLIENT_URL=https://kanban-app-two-nu.vercel.app
+```
+
 🚀 Local Development Setup
 
 Clone the repository
 
+```bash
 git clone https://github.com/SKEL1NJA/kanban-app.git
+```
 
 Navigate to the project folder
 
+```bash
 cd kanban-app
 Install Backend Dependencies
 cd server
 npm install
 npm run dev
+```
+
 Install Frontend Dependencies
+
+```bash
 cd client
 npm install
 npm run dev
+```
 
 📜 License
 
