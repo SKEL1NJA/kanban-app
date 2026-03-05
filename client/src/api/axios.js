@@ -3,10 +3,9 @@ import axios from "axios";
 const API = axios.create({
   baseURL:
     import.meta.env.VITE_API_URL ||
-    "http://localhost:5000/api",
+    "https://kanban-app-two-nu.vercel.app/",
 });
 
-/* attach JWT automatically */
 API.interceptors.request.use((req) => {
   const token = localStorage.getItem("token");
 
