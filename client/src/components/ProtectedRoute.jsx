@@ -6,11 +6,9 @@ export default function ProtectedRoute({ children }) {
 
   const { user } = useContext(AuthContext);
 
-  // ❌ Not logged in
   if (!user) {
     return <Navigate to="/" replace />;
   }
 
-  // ✅ Logged in
   return children;
 }
