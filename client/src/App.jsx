@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 
 import Login from "./pages/Login";
@@ -10,8 +10,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
-    <BrowserRouter>
-      {/* GLOBAL TOAST */}
+    <>
       <Toaster
         position="top-right"
         toastOptions={{
@@ -26,7 +25,7 @@ function App() {
 
         {/* AUTH */}
         <Route path="/" element={<Login />} />
-        <Route path="/login" element={<Login />} />   {/* ✅ add this */}
+        <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
         {/* PROTECTED */}
@@ -58,7 +57,7 @@ function App() {
         />
 
       </Routes>
-    </BrowserRouter>
+    </>
   );
 }
 
