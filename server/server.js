@@ -10,7 +10,12 @@ const app = express();
 
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: [
+      "http://localhost:5173",
+      "https://kanban-app-two-nu.vercel.app",
+      "https://kanban-app-git-main-skel1njas-projects.vercel.app",
+      "https://kanban-flefhcnxl-skel1njas-projects.vercel.app"
+    ],
     credentials: true,
   })
 );
