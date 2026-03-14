@@ -1,4 +1,4 @@
-KarmKaro – Realtime Kanban Board
+# KarmKaro – Realtime Kanban Board
 
 KarmKaro is a full-stack Kanban task management application that helps teams organize work, track progress, and collaborate in real time.
 
