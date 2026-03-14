@@ -1,8 +1,10 @@
-🚀 Realtime Kanban Board
+KarmKaro – Realtime Kanban Board
 
-A full-stack Kanban task management application that allows users to organize tasks using boards, lists, and cards with drag-and-drop functionality and real-time updates.
+KarmKaro is a full-stack Kanban task management application that helps teams organize work, track progress, and collaborate in real time.
 
-The application supports secure authentication, collaborative task management, and live synchronization of card movements across users using WebSockets.
+Inspired by the idea of “Karm karo, progress dekho”, the application allows users to manage tasks using boards, lists, and cards with drag-and-drop functionality and live updates.
+
+It supports secure authentication, collaborative task management, and real-time synchronization of task movements using WebSockets.
 
 🌐 Live Demo
 
@@ -144,7 +146,7 @@ Client ⇄ Socket.io ⇄ Server
 📁 Project Structure
 
 ```bash
-KANBAN-APP
+KARMKARO
 │
 ├── client
 │   ├── src
@@ -191,14 +193,17 @@ CLIENT_URL=https://kanban-app-two-nu.vercel.app
 Clone the repository
 
 ```bash
-git clone https://github.com/SKEL1NJA/kanban-app.git
+git clone https://github.com/SKEL1NJA/KarmKaro.git
 ```
 
 Navigate to the project folder
 
 ```bash
-cd kanban-app
+cd KarmKaro
+```
 Install Backend Dependencies
+
+```bash
 cd server
 npm install
 npm run dev
